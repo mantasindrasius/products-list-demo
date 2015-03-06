@@ -1,0 +1,14 @@
+{
+    "name": "sku-demo",
+    "version": "1.0",
+    "devDependencies": {
+        "dustjs-linkedin": "*",
+        "dustjs-linkedin-helpers": "*",
+        "jquery": "*",
+        "promise-js": "*",
+        "sinon": "*"
+    },
+    "ignore": [
+        "bower.json"
+    ]
+}
