@@ -1,24 +1,22 @@
 describe("a product service", function() {
     var baseUrl = 'http://localhost:9999/';
+    var service = new ProductService(baseUrl + 'api/products');
 
-    it("find a product description by SKU code", function(done) {
-        var service = new ProductService(baseUrl + 'api/products');
-        var product = {
-            name: "Lenovo",
-            price: "60 EUR"
-        };
+    var product = {
+        name: "Lenovo",
+        price: "60 EUR"
+    };
 
+    it("find a product description by SKU code", () =>
         service
             .storeProduct("XYZ", product)
-            .then(function() {
+            .then(() =>
                 service
                     .getBySku("XYZ")
                     .then(function(result) {
-                        expect(result.name).toBe("Lenovo");
-                        expect(result.price).toBe("60 EUR");
-
-                        done();
+                        expect(result.name).to.be.equal("Lenovo");
+                        expect(result.price).to.be.equal("60 EUR");
                     })
-            });
-    });
+            )
+    );
 });

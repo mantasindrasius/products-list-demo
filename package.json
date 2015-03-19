@@ -26,7 +26,14 @@
         "gulp-spawn": "*",
         "sinon": "*",
         "bower": "*",
-        "karma-sinon": "*"
+        "karma-sinon": "*",
+        "gulp-traceur": "*",
+        "gulp-bower": "*",
+        "mocha": "*",
+        "gulp-mocha": "*",
+        "chai": "*",
+        "karma-mocha": "*",
+        "karma-chai": "*"
     },
     "engines": {
         "node": ">=0.8.0"

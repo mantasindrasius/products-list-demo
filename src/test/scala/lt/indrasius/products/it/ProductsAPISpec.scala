@@ -15,7 +15,7 @@ class ProductsAPISpec extends FlatSpec with MustMatchers {
     val productId = "some_id"
     val data = """{"name":"Hello","price":"212 EUR"}"""
 
-    client.put(productId, withBody(data)) must (bePrinted and beSuccessful)
+    client.put(productId, withBody(data)) must beSuccessful
     client.get(productId) must haveBody(data)
   }
 }

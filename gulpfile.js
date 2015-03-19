@@ -1,19 +1,30 @@
-var gulp = require('gulp');
-var spawn = require('child_process').spawn;
-var exec = require('child_process').exec;
-var jasmine = require('gulp-jasmine');
-var http = require('http');
-var drivers = require('./client/spec/e2e-drivers.js').drivers;
-var karma = require('karma').server;
+"use strict";
 
-var jasmineReporters = require('jasmine-reporters');
-var jasmineOptions = {
-    //reporter: new jasmineReporters.TeamCityReporter()
-};
+var gulp = require('gulp'),
+    spawn = require('child_process').spawn,
+    exec = require('child_process').exec,
+    http = require('http'),
+    drivers = require('./client/spec/e2e-drivers.js').drivers,
+    karma = require('karma').server,
+    bower = require('gulp-bower'),
+    traceur = require('gulp-traceur'),
+    mocha = require('gulp-mocha');
 
 var server;
 var serverPort = 9999;
 var serverJar = 'target/scala-2.10/sku-demo_2.10-1.0-one-jar.jar';
+
+
+gulp.task('bower', function() {
+    return bower()
+        .pipe(gulp.dest('client/app/bower_components/'))
+});
+
+gulp.task('transpile', function() {
+    return gulp.src('client/spec/**/*.js')
+        .pipe(traceur())
+        .pipe(gulp.dest('target/client/spec/'));
+});
 
 gulp.task('package-server', function(cb) {
     exec('sbt one-jar', function(err, stdout, stderr) {
@@ -89,7 +100,7 @@ gulp.task('ready-server', ['run-server', 'wait-for-server'], function() {
     console.log('Server running as PID ' + server.pid);
 });
 
-gulp.task('contract', function (done) {
+gulp.task('run-contract', function (done) {
     karma.start({
         configFile: __dirname + '/karma-server.conf.js',
         singleRun: true,
@@ -97,26 +108,25 @@ gulp.task('contract', function (done) {
     }, done);
 });
 
-gulp.task('e2e', function () {
-    return gulp.src('statics/spec/e2e/**')
-        .pipe(jasmine(jasmineOptions))
-        .on('finish', function() {
-            drivers.stop();
-        });
+gulp.task('contract', ['transpile', 'ready-server'], function() {
+    gulp.start('run-contract', stopServer);
 });
 
-gulp.task('acceptance', function () {
-    return gulp.src('client/spec/acceptance/sku-page.js')
-        .pipe(jasmine({
-            verbose: true,
-            includeStackTrace: true
+gulp.task('run-acceptance', function () {
+    return gulp.src('target/client/spec/acceptance/sku-page.js')
+        .pipe(mocha({
+            reporter: 'dot'
         }))
         .on('finish', function() {
             drivers.stop();
         });
 });
 
-gulp.task('test', function (done) {
+gulp.task('acceptance', ['transpile', 'ready-server'], function() {
+    gulp.start('run-acceptance', stopServer);
+});
+
+gulp.task('test', ['transpile'], function (done) {
     karma.start({
         configFile: __dirname + '/karma.conf.js',
         singleRun: true,
@@ -124,15 +134,13 @@ gulp.task('test', function (done) {
     }, done);
 });
 
-gulp.task('eyes', ['acceptance'], function() {
-    stopServer();
+gulp.task('server-tests', ['ready-server'], function() {
+    gulp.start('run-contract', function() {
+        gulp.start('run-acceptance', stopServer)
+    })
 });
 
-gulp.task('server-tests', ['contract', 'acceptance'], function() {
-    stopServer();
-});
-
-gulp.task('all-tests', ['test', 'ready-server'], function(cb) {
+gulp.task('all-tests', ['test'], function(cb) {
     gulp.start('server-tests');
 
     cb();

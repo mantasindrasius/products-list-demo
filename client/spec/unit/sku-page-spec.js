@@ -1,5 +1,5 @@
 describe("a SKU page", function() {
-    it("render a product data", function(done) {
+    it("render a product data", () => {
         var targetElement = document.createElement('div');
         var service = new ProductService();
         var getBySku = sinon.stub(service, 'getBySku');
@@ -16,14 +16,13 @@ describe("a SKU page", function() {
 
         getBySku.withArgs("XYZ").returns(productResult);
 
-        page.findProduct("XYZ").then(function() {
-            var nameElement = document.getElementById('name');
-            var priceElement = document.getElementById('price');
+        return page.findProduct("XYZ")
+            .then(function() {
+                var nameElement = document.getElementById('name');
+                var priceElement = document.getElementById('price');
 
-            expect(nameElement.textContent).toBe('DEF');
-            expect(priceElement.textContent).toBe('50 EUR');
-
-            done();
-        });
+                expect(nameElement.textContent).to.be.equal('DEF');
+                expect(priceElement.textContent).to.be.equal('50 EUR');
+            });
     });
 });

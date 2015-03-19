@@ -1,22 +1,25 @@
 var e2e = require('../e2e-drivers.js');
 var baseUrl = require('../config.js').serverBaseUrl;
-var httpClient = require('../http-client.js').client;
+var http = require('../http-client.js').client;
+var expect = require('chai').expect;
 
 var drivers = e2e.drivers;
 var webdriver = e2e.webdriver;
 
-describe("a SKU page", function(done) {
-    it("find a product description by SKU code", function(done) {
-        var givenProductSku = '20BF001PUS';
-        var givenProductName = 'Lenovo ThinkPad T540p';
-        var givenProductPrice = '50 EUR';
+describe("a SKU page", () => {
+    let whenProductExists = (givenProductSku, givenProductName, givenProductPrice) =>
+        http.put(baseUrl + 'api/products/' + givenProductSku, {
+            name: givenProductName,
+            price: givenProductPrice
+        });
 
-        httpClient
-            .put(baseUrl + 'api/products/' + givenProductSku, {
-                name: givenProductName,
-                price: givenProductPrice
-            })
-            .then(function() {
+    let givenProductSku = '20BF001PUS';
+    let givenProductName = 'Lenovo ThinkPad T540p';
+    let givenProductPrice = '50 EUR';
+
+    it("find a product description by SKU code", () =>
+        whenProductExists(givenProductSku, givenProductName, givenProductPrice)
+            .then(() => {
                 var driver = drivers.driver;
 
                 driver.get(baseUrl + 'index.html');
@@ -29,10 +32,8 @@ describe("a SKU page", function(done) {
 
                 var productName = driver.findElement(webdriver.By.id('name'));
 
-                productName.getInnerHtml().then(function(name, error) {
-                    expect(name).toBe(givenProductName);
-                    done();
-                });
-            });
-    });
+                return productName.getInnerHtml()
+                    .then(name => expect(name).to.be.equal(givenProductName));
+            })
+    );
 });
