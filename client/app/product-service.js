@@ -5,7 +5,7 @@ function ProductService(baseUrl) {
                 url: baseUrl + '/' + sku,
                 method: 'PUT',
                 success: fulfill,
-                error: function(xhr, status, error) { reject(xhr.status); },
+                error: function(xhr) { reject(xhr.status); },
                 contentType: 'application/json',
                 data: JSON.stringify(product)
             });

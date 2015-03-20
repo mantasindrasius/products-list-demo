@@ -26,6 +26,12 @@ gulp.task('transpile', function() {
         .pipe(gulp.dest('target/client/spec/'));
 });
 
+gulp.task('transpile-server-e2e', function() {
+    return gulp.src('src/test/resources/e2e/**/*.js')
+        .pipe(traceur())
+        .pipe(gulp.dest('target/server-e2e/'));
+});
+
 gulp.task('package-server', function(cb) {
     exec('sbt one-jar', function(err, stdout, stderr) {
         console.log(stdout);
@@ -44,26 +50,6 @@ gulp.task('run-server', function () {
     server.on('exit', function() {
         console.log('Process has exited');
     })
-});
-
-gulp.task('start-server', function () {
-    gulp.start('run-server2');
-});
-
-gulp.task('run-server2', function(cb) {
-    var options = {
-        continueOnError: false, // default = false, true means don't emit error event
-        pipeStdout: false, // default = false, true means stdout is written to file.contents
-        customTemplatingThing: "test" // content passed to gutil.template()
-    };
-    var reportOptions = {
-        err: true, // default = true, false means don't write err
-        stderr: true, // default = true, false means don't write stderr
-        stdout: true // default = true, false means don't write stdout
-    }
-    gulp.src('./**/**')
-        .pipe(exec('java -jar ' + serverJar, options))
-        .pipe(exec.reporter(reportOptions));
 });
 
 gulp.task('wait-for-server', function(cb) {
@@ -108,6 +94,19 @@ gulp.task('run-contract', function (done) {
     }, done);
 });
 
+gulp.task('run-server-e2e', ['transpile-server-e2e'], function (done) {
+    karma.start({
+        configFile: __dirname + '/karma-server-e2e.conf.js',
+        singleRun: true,
+        autoWatch: false
+    }, done);
+});
+
+gulp.task('server-e2e', ['ready-server'], function() {
+    gulp.start('run-server-e2e', stopServer);
+});
+
+
 gulp.task('contract', ['transpile', 'ready-server'], function() {
     gulp.start('run-contract', stopServer);
 });
@@ -135,9 +134,11 @@ gulp.task('test', ['transpile'], function (done) {
 });
 
 gulp.task('server-tests', ['ready-server'], function() {
-    gulp.start('run-contract', function() {
-        gulp.start('run-acceptance', stopServer)
-    })
+    gulp.start('run-server-e2e', function() {
+        gulp.start('run-contract', function () {
+            gulp.start('run-acceptance', stopServer)
+        })
+    });
 });
 
 gulp.task('all-tests', ['test'], function(cb) {
@@ -148,13 +149,8 @@ gulp.task('all-tests', ['test'], function(cb) {
 
 gulp.task('default', ['all-tests']);
 
-function test() {
-    this.on = function(data) {
-        console.log('Got: ', data);
-    }
-}
-
 function stopServer() {
     console.log('Stopping the server');
     server.kill('SIGINT');
 }
+
