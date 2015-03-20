@@ -13,7 +13,7 @@ var gulp = require('gulp'),
 var server;
 var serverPort = 9999;
 var serverJar = 'target/scala-2.10/sku-demo_2.10-1.0-one-jar.jar';
-
+var reporter = 'dot';
 
 gulp.task('bower', function() {
     return bower()
@@ -87,7 +87,7 @@ gulp.task('ready-server', ['run-server', 'wait-for-server'], function() {
 });
 
 gulp.task('run-contract', function (done) {
-    karma.start({
+    startKarma({
         configFile: __dirname + '/karma-server.conf.js',
         singleRun: true,
         autoWatch: false
@@ -95,7 +95,7 @@ gulp.task('run-contract', function (done) {
 });
 
 gulp.task('run-server-e2e', ['transpile-server-e2e'], function (done) {
-    karma.start({
+    startKarma({
         configFile: __dirname + '/karma-server-e2e.conf.js',
         singleRun: true,
         autoWatch: false
@@ -113,9 +113,7 @@ gulp.task('contract', ['transpile', 'ready-server'], function() {
 
 gulp.task('run-acceptance', function () {
     return gulp.src('target/client/spec/acceptance/sku-page.js')
-        .pipe(mocha({
-            reporter: 'dot'
-        }))
+        .pipe(configedMocha())
         .on('finish', function() {
             drivers.stop();
         });
@@ -126,7 +124,7 @@ gulp.task('acceptance', ['transpile', 'ready-server'], function() {
 });
 
 gulp.task('test', ['transpile'], function (done) {
-    karma.start({
+    startKarma({
         configFile: __dirname + '/karma.conf.js',
         singleRun: true,
         autoWatch: false
@@ -149,8 +147,30 @@ gulp.task('all-tests', ['test'], function(cb) {
 
 gulp.task('default', ['all-tests']);
 
+gulp.task('ci', function() {
+    reporter = 'teamcity';
+
+    gulp.start('all-tests');
+});
+
 function stopServer() {
     console.log('Stopping the server');
     server.kill('SIGINT');
 }
 
+function startKarma(options, cb) {
+    options.reporters = ['teamcity'];
+
+    karma.start(options, cb);
+}
+
+function configedMocha() {
+    var mochaReporter = 'dot'
+
+    if (reporter == 'teamcity')
+        mochaReporter = 'mocha-teamcity-reporter'
+
+    return mocha({
+        reporter: mochaReporter
+    })
+}
