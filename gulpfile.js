@@ -119,11 +119,11 @@ gulp.task('run-acceptance', function () {
         });
 });
 
-gulp.task('acceptance', ['transpile', 'ready-server'], function() {
+gulp.task('acceptance', ['bower', 'transpile', 'ready-server'], function() {
     gulp.start('run-acceptance', stopServer);
 });
 
-gulp.task('test', ['transpile'], function (done) {
+gulp.task('test', ['bower', 'transpile'], function (done) {
     startKarma({
         configFile: __dirname + '/karma.conf.js',
         singleRun: true,
