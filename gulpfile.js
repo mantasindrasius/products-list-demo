@@ -159,16 +159,21 @@ function stopServer() {
 }
 
 function startKarma(options, cb) {
-    options.reporters = ['teamcity'];
+    var karmaReporter = 'dots';
+
+    if (reporter == 'teamcity')
+        karmaReporter = reporter;
+
+    options.reporters = [karmaReporter];
 
     karma.start(options, cb);
 }
 
 function configedMocha() {
-    var mochaReporter = 'dot'
+    var mochaReporter = 'dot';
 
     if (reporter == 'teamcity')
-        mochaReporter = 'mocha-teamcity-reporter'
+        mochaReporter = 'mocha-teamcity-reporter';
 
     return mocha({
         reporter: mochaReporter

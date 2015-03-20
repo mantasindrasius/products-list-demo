@@ -4,6 +4,7 @@
         <script src="app/bower_components/dustjs-linkedin/dist/dust-full.js" type="application/javascript"></script>
         <script src="app/bower_components/dustjs-linkedin-helpers/dist/dust-helpers.js" type="application/javascript"></script>
         <script src="app/bower_components/jquery/dist/jquery.js" type="application/javascript"></script>
+        <script src="app/data-renderer.js" type="application/javascript"></script>
         <script src="app/product-service.js" type="application/javascript"></script>
         <script src="app/sku-page.js" type="application/javascript"></script>
     </head>
@@ -19,8 +20,9 @@
             var productDetails = document.getElementById('product-details');
             var sku = document.getElementById('sku');
 
+            var dataRenderer = new DataRenderer();
             var productService = new ProductService('api/products');
-            var page = new SkuPage(productDetails, productService);
+            var page = new SkuPage(productDetails, productService, dataRenderer);
 
             var submit = document.getElementById('submit');
 
