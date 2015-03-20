@@ -132,11 +132,11 @@ gulp.task('test', ['bower', 'transpile'], function (done) {
 });
 
 gulp.task('server-tests', ['ready-server'], function() {
-    gulp.start('run-server-e2e', function() {
+    //gulp.start('run-server-e2e', function() {
         gulp.start('run-contract', function () {
             gulp.start('run-acceptance', stopServer)
         })
-    });
+    //});
 });
 
 gulp.task('all-tests', ['test'], function(cb) {
