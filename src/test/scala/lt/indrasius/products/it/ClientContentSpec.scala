@@ -25,11 +25,4 @@ class ClientContentSpec extends FlatSpec with MustMatchers {
       haveContentType("application/javascript")
     }
   }
-
-  it should "serve bower component" in {
-    client.get("app/bower_components/dustjs-linkedin/dist/dust-full.js") must {
-      beSuccessful and
-      haveContentType("application/javascript")
-    }
-  }
 }
