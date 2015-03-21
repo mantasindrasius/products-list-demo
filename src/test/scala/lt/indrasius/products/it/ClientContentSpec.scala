@@ -15,7 +15,7 @@ class ClientContentSpec extends FlatSpec with MustMatchers {
     client.get("index.html") must {
       beSuccessful and
       haveContentType("text/html") and
-      haveBody(include("<body>"))
+      haveContent(include("<body>"))
     }
   }
 
