@@ -1,0 +1,1 @@
+configureChai(chai, _);

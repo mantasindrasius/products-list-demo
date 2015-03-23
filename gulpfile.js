@@ -43,13 +43,13 @@ gulp.task('package-server', function(cb) {
 gulp.task('run-server', function () {
     server = spawn('java', ['-jar', serverJar, 'forum.conf', '9902']);
 
-    server.on('close', function (code, signal) {
+    /*server.on('close', function (code, signal) {
         console.log('child process terminated due to receipt of signal '+signal);
     });
 
     server.on('exit', function() {
         console.log('Process has exited');
-    })
+    })*/
 });
 
 gulp.task('wait-for-server', function(cb) {
@@ -86,7 +86,7 @@ gulp.task('ready-server', ['run-server', 'wait-for-server'], function() {
     console.log('Server running as PID ' + server.pid);
 });
 
-gulp.task('run-contract', function (done) {
+gulp.task('run-contract', ['transpile'], function (done) {
     startKarma({
         configFile: __dirname + '/karma-server.conf.js',
         singleRun: true,
@@ -107,20 +107,31 @@ gulp.task('server-e2e', ['ready-server'], function() {
 });
 
 
-gulp.task('contract', ['transpile', 'ready-server'], function() {
+gulp.task('contract', ['ready-server'], function() {
     gulp.start('run-contract', stopServer);
 });
 
-gulp.task('run-acceptance', function () {
+gulp.task('ready-for-acceptance', ['transpile'], function(done) {
+    gulp.start('chai-matchers', done);
+});
+
+gulp.task('run-acceptance', ['ready-for-acceptance'], function () {
     return gulp.src('target/client/spec/acceptance/sku-page.js')
         .pipe(configedMocha())
-        .on('finish', function() {
+        .on('end', function() {
             drivers.stop();
         });
 });
 
-gulp.task('acceptance', ['bower', 'transpile', 'ready-server'], function() {
+gulp.task('acceptance', ['bower', 'ready-server'], function() {
     gulp.start('run-acceptance', stopServer);
+});
+
+gulp.task('chai-matchers', function() {
+    var chai = require('chai'),
+        underscore = require('underscore');
+
+    require('./target/client/spec/matchers.js').configureChai(chai, underscore);
 });
 
 gulp.task('test', ['bower', 'transpile'], function (done) {
@@ -135,7 +146,7 @@ gulp.task('server-tests', ['ready-server'], function() {
     //gulp.start('run-server-e2e', function() {
         gulp.start('run-contract', function () {
             gulp.start('run-acceptance', stopServer)
-        })
+        });
     //});
 });
 

@@ -15,6 +15,25 @@ describe("a SKU page", function() {
         });
     });
 
+    it("render a product list", function() {
+        var givenProducts = [
+            {
+                sku: 'XX-1234',
+                name: 'XYZ',
+                price: '99 USD'
+            }, {
+                sku: 'XX-1235',
+                name: 'DEF',
+                price: '102 USD'
+            }];
+
+        return this.renderer.render('product-items', givenProducts)
+            .then(result => {
+                expect($(result).find('.product-item').length).to.be.equal(2);
+                expect($(result).find('.product-item:eq(1) .product-name').html()).to.be.equal('DEF');
+            });
+    });
+
     it("render an error message", function() {
         var givenData = {
             message: 'This is a failure'

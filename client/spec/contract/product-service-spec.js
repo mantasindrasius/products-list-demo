@@ -19,4 +19,17 @@ describe("a product service", function() {
                     })
             )
     );
+
+    it("list all products in the server", () =>
+            service
+                .storeProduct("SKU-1", product)
+                .then(() => service.storeProduct("SKU-2", product))
+                .then(() =>
+                    service
+                        .getProducts()
+                        .then(function(products) {
+                            expect(products).to.haveSkus(['SKU-2', 'SKU-1']);
+                        })
+            )
+    );
 });

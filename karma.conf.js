@@ -9,8 +9,10 @@ module.exports = function(config) {
             'client/app/bower_components/jquery/dist/jquery.js',
             'client/app/data-renderer.js',
             'client/app/sku-page.js',
+            'client/app/product-list-widget.js',
             'client/app/product-service.js',
             'target/client/spec/unit/sku-page-spec.js',
+            'target/client/spec/unit/product-list-widget-spec.js',
             'target/client/spec/unit/data-renderer-spec.js'
         ],
         reporters: ['dots'],

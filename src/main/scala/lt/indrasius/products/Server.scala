@@ -21,14 +21,21 @@ case class ProductsServer(listenPort: Int, staticsPath: String) extends Embedded
     case HttpRequest(GET, Uri(_, _, path, _, _), _, _, _) if path.startsWith(Uri.Path("/app")) =>
       respondWithFile(path.tail.tail.toString())
     case HttpRequest(PUT, uri, _, entity, _) if uri.path.startsWith(Uri.Path("/api/products/")) =>
-      dao.store(getId(uri), JSON.parse[Product](entity.asString))
+      val sku = getId(uri)
+
+      dao.store(sku, JSON.parse[ProductDTO](entity.asString).toEntity(sku))
 
       HttpResponse(NoContent)
+    case HttpRequest(GET, uri, _, _, _) if uri.path == Uri.Path("/api/products/") =>
+      val allProducts = dao.listAll map { _.toDTO }
+
+      HttpResponse(OK, HttpEntity(ContentTypes.`application/json`,
+        JSON.stringify(allProducts)))
     case HttpRequest(GET, uri, _, _, _) if uri.path.startsWith(Uri.Path("/api/products/")) =>
       dao.get(getId(uri)) match {
         case Some(product) =>
           HttpResponse(OK, HttpEntity(ContentTypes.`application/json`,
-            JSON.stringify(product)))
+            JSON.stringify(product.toDTO)))
         case None =>
           HttpResponse(NotFound)
       }
@@ -54,7 +61,13 @@ case class ProductsServer(listenPort: Int, staticsPath: String) extends Embedded
   }
 }
 
-case class Product(name: String, price: String)
+case class Product(sku: String, name: String, price: String) {
+  def toDTO = ProductDTO(name, price, Some(sku))
+}
+
+case class ProductDTO(name: String, price: String, sku: Option[String] = None) {
+  def toEntity(sku: String) = Product(sku, name, price)
+}
 
 object MemoryProductDAO {
   val products = TrieMap[String, Product]()
@@ -64,6 +77,9 @@ object MemoryProductDAO {
 
   def get(sku: String): Option[Product] =
     products.get(sku)
+
+  def listAll: Seq[Product] =
+    products map { _._2 } toSeq
 }
 
 object JSON {

@@ -6,7 +6,8 @@
         "dustjs-linkedin-helpers": "*",
         "jquery": "*",
         "promise-js": "*",
-        "sinon": "*"
+        "sinon": "*",
+        "underscore": "*"
     },
     "ignore": [
         "bower.json"

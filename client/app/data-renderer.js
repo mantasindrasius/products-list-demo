@@ -16,5 +16,6 @@ function DataRenderer() {
     }
 
     registerTemplate('product', '<div>Name: <span id="name">{name}</span></div><div>Price: <span id="price">{price}</span></div>');
+    registerTemplate('product-items', '<table>{#.}<tr class="product-item"><td class="product-sku">{sku}</td><td class="product-name">{name}</td><td class="product-price">{price}</td></tr>{/.}</table>');
     registerTemplate('error', '<div><span id="error">{message}</span></div>');
 }

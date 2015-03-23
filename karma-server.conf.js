@@ -5,8 +5,11 @@ module.exports = function(config) {
         files: [
             'client/app/bower_components/promise-js/promise.js',
             'client/app/bower_components/jquery/dist/jquery.js',
+            'client/app/bower_components/underscore/underscore.js',
+            'target/client/spec/matchers.js',
+            'target/client/spec/bootstrap-client.js',
             'client/app/product-service.js',
-            'target/client/spec/contract/product-service-spec.js'
+            'target/client/spec/contract/product-service-spec.js',
         ],
         reporters: ['dots'],
         colors: false,

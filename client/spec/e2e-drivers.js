@@ -9,10 +9,10 @@ exports.webdriver = webdriver;
 exports.drivers = new function() {
     var me = this;
 
-    var service = new chrome.ServiceBuilder(path).build();
-    chrome.setDefaultService(service);
-
     var _driver;
+
+    //var _service = new chrome.ServiceBuilder(path).build();
+    //chrome.setDefaultService(_service);
 
     this.__defineGetter__('driver', function(){
         if (!_driver) {
@@ -38,6 +38,7 @@ exports.drivers = new function() {
     };
 
     this.stop = function() {
-        if (_driver) _driver.quit();
+        if (_driver)
+            _driver.quit();
     }
 }

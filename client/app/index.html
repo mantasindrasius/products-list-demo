@@ -7,21 +7,24 @@
         <script src="app/data-renderer.js" type="application/javascript"></script>
         <script src="app/product-service.js" type="application/javascript"></script>
         <script src="app/sku-page.js" type="application/javascript"></script>
+        <script src="app/product-list-widget.js" type="application/javascript"></script>
     </head>
     <body>
         <div>
             <span>Find by SKU:</span> <input id="sku" />
             <button id="submit">Find</button>
         </div>
-        <div id="product-details">
-
-        </div>
+        <div id="product-details"></div>
+        <div id="products-list"></div>
         <script>
             var productDetails = document.getElementById('product-details');
+            var productList = document.getElementById('products-list');
+
             var sku = document.getElementById('sku');
 
             var dataRenderer = new DataRenderer();
             var productService = new ProductService('api/products');
+
             var page = new SkuPage(productDetails, productService, dataRenderer);
 
             var submit = document.getElementById('submit');
@@ -29,6 +32,10 @@
             submit.addEventListener('click', function(ev) {
                 page.findProduct(sku.value);
             });
+
+            var listWidget = new ProductListWidget(productList, productService, dataRenderer);
+
+            listWidget.render();
         </script>
     </body>
 </html>

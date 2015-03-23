@@ -1,3 +1,5 @@
+"use strict";
+
 function ProductService(baseUrl) {
     this.storeProduct = function(sku, product) {
         return new Promise(function(fulfill, reject) {
@@ -9,6 +11,12 @@ function ProductService(baseUrl) {
                 contentType: 'application/json',
                 data: JSON.stringify(product)
             });
+        });
+    };
+
+    this.getProducts = function() {
+        return new Promise(function(fulfill) {
+            $.getJSON(baseUrl + '/', fulfill);
         });
     };
 

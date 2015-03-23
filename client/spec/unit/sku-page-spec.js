@@ -47,4 +47,5 @@ describe("a SKU page", function() {
         return this.page.findProduct("XYZ").then(function() {
             expect($targetElement.find('#error').html()).to.be.equal('Failed to fetch product data');
         });
-    });});
+    });
+});
