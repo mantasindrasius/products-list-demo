@@ -15,8 +15,13 @@ function ProductService(baseUrl) {
     };
 
     this.getProducts = function() {
-        return new Promise(function(fulfill) {
-            $.getJSON(baseUrl + '/', fulfill);
+        return new Promise(function(fulfill, reject) {
+            $.ajax({
+                url: baseUrl + '/',
+                method: 'GET',
+                success: fulfill,
+                error: function(xhr) { reject(xhr.status); }
+            });
         });
     };
 

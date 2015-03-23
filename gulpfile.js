@@ -94,6 +94,10 @@ gulp.task('run-contract', ['transpile'], function (done) {
     }, done);
 });
 
+gulp.task('contract', ['ready-server'], function() {
+    gulp.start('run-contract', stopServer);
+});
+
 gulp.task('run-server-e2e', ['transpile-server-e2e'], function (done) {
     startKarma({
         configFile: __dirname + '/karma-server-e2e.conf.js',
@@ -104,11 +108,6 @@ gulp.task('run-server-e2e', ['transpile-server-e2e'], function (done) {
 
 gulp.task('server-e2e', ['ready-server'], function() {
     gulp.start('run-server-e2e', stopServer);
-});
-
-
-gulp.task('contract', ['ready-server'], function() {
-    gulp.start('run-contract', stopServer);
 });
 
 gulp.task('run-acceptance', ['chai-matchers'], function () {
