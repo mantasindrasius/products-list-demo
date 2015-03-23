@@ -111,11 +111,7 @@ gulp.task('contract', ['ready-server'], function() {
     gulp.start('run-contract', stopServer);
 });
 
-gulp.task('ready-for-acceptance', ['transpile'], function(done) {
-    gulp.start('chai-matchers', done);
-});
-
-gulp.task('run-acceptance', ['ready-for-acceptance'], function () {
+gulp.task('run-acceptance', ['chai-matchers'], function () {
     return gulp.src('target/client/spec/acceptance/sku-page.js')
         .pipe(configedMocha())
         .on('end', function() {
@@ -127,7 +123,7 @@ gulp.task('acceptance', ['bower', 'ready-server'], function() {
     gulp.start('run-acceptance', stopServer);
 });
 
-gulp.task('chai-matchers', function() {
+gulp.task('chai-matchers', ['transpile'], function() {
     var chai = require('chai'),
         underscore = require('underscore');
 
