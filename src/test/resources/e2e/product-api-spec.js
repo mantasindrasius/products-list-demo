@@ -7,12 +7,14 @@ describe("a product service", function() {
         price: "60 EUR"
     };
 
-    it("find a product description by SKU code", () =>
-        http.put("XYZDEF", product)
-            .then(() => http.get("XYZDEF"))
-            .then(gotResult => {
+    it("find a product description by SKU code", function() {
+        return http.put("XYZDEF", product)
+            .then(function() {
+                return http.get("XYZDEF")
+            })
+            .then(function(gotResult) {
                 expect(gotResult.name).to.be.equal("Lenovo");
                 expect(gotResult.price).to.be.equal("60 EUR");
-            })
-    );
+            });
+    });
 });

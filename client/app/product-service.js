@@ -25,7 +25,7 @@ function ProductService(baseUrl) {
         });
     };
 
-    this.getBySku = function(sku) {
+    this.getProduct = function(sku) {
         return new Promise(function(fulfill) {
             $.getJSON(baseUrl + '/' + sku, fulfill);
         });

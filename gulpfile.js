@@ -165,7 +165,7 @@ function stopServer() {
 }
 
 function startKarma(options, cb) {
-    var karmaReporter = 'dots';
+    var karmaReporter = 'spec';
 
     if (reporter == 'teamcity')
         karmaReporter = reporter;
@@ -176,7 +176,7 @@ function startKarma(options, cb) {
 }
 
 function configedMocha() {
-    var mochaReporter = 'dot';
+    var mochaReporter = 'spec';
 
     if (reporter == 'teamcity')
         mochaReporter = 'mocha-teamcity-reporter';

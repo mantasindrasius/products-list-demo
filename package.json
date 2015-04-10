@@ -35,7 +35,8 @@
         "karma-mocha": "*",
         "karma-chai": "*",
         "mocha-teamcity-reporter": "*",
-        "underscore": "*"
+        "underscore": "*",
+        "karma-spec-reporter": "*"
     },
     "engines": {
         "node": ">=0.8.0"

@@ -10,7 +10,7 @@ describe("a product service", function() {
     it("find a product description by SKU code", () =>
         service
             .storeProduct("XYZ", product)
-            .then(() => service.getBySku("XYZ"))
+            .then(() => service.getProduct("XYZ"))
             .then(function(result) {
                 expect(result.name).to.be.equal("Lenovo");
                 expect(result.price).to.be.equal("60 EUR");

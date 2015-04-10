@@ -63,9 +63,9 @@ describe("a SKU page", () => {
                 let productName = driver.findElement(webdriver.By.id('name'));
 
                 return productName
-                    .getInnerHtml()
-                    .then(name => expect(name).to.be.equal(this.givenProductName));
+                    .getInnerHtml();
             })
+            .then(name => expect(name).to.be.equal(this.givenProductName))
     );
 
     it("display the list of available products", () =>

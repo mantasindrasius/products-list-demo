@@ -1,7 +1,7 @@
 function SkuPage(pageElement, productService, dataRenderer) {
     this.findProduct = function(sku) {
         return productService
-            .getBySku(sku)
+            .getProduct(sku)
             .then(function(data) {
                 display('product', data);
             })
