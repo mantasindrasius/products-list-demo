@@ -14,7 +14,7 @@ resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 
 libraryDependencies += "lt.indrasius" %% "embedded-server" % "1.0-SNAPSHOT"
 
-libraryDependencies += "lt.indrasius" %% "http-testkit" % "1.0-SNAPSHOT" % "test"
+libraryDependencies += "com.sparkjava" % "spark-core" % "1.0"
 
 libraryDependencies += "lt.indrasius" %% "js-e2e-testkit" % "1.0-SNAPSHOT" % "test"
 

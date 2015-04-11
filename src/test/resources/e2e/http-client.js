@@ -5,10 +5,10 @@ var HttpClient = function(baseUrl) {
         return me.request('GET', url);
     };
 
-    this.post = function(url, data) {
+    this.put = function(url, data) {
         var postData = JSON.stringify(data);
 
-        return me.request('POST', url, postData, 'application/json');
+        return me.request('PUT', url, postData, 'application/json');
     };
 
     this.request = function(method, relative, data, contentType) {
@@ -18,9 +18,8 @@ var HttpClient = function(baseUrl) {
             var url = baseUrl + relative;
 
             xhr.onreadystatechange = function () {
-
                 if (this.readyState == 4) {
-                    if (this.status == 200)
+                    if (Math.floor(this.status / 100) === 2)
                         handleContent(this, fulfill);
                     else if (this.status == 0)
                         reject('Connection refused');
@@ -51,6 +50,8 @@ var HttpClient = function(baseUrl) {
             fulfill(document);
         } else if (/^\s*application\/json\s*(?:;|$)/i.test(contentType)) {
             fulfill(JSON.parse(xhr.responseText));
+        } else {
+            fulfill(xhr.responseText);
         }
     }
 };

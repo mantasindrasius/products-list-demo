@@ -4,7 +4,7 @@ function configureChai(chai, _) {
     chai.Assertion.addMethod('haveNamesFrom', function (expectedNames) {
         let actualNames = this._obj.map(i => i.name);
 
-        expect(actualNames).to.containAllOf(actualNames);
+        expect(actualNames).to.containAllOf(expectedNames);
     });
 
     chai.Assertion.addMethod('containAllOf', function (expectedValues) {
