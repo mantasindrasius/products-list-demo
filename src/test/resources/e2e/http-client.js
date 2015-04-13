@@ -51,7 +51,7 @@ var HttpClient = function(baseUrl) {
         } else if (/^\s*application\/json\s*(?:;|$)/i.test(contentType)) {
             fulfill(JSON.parse(xhr.responseText));
         } else {
-            fulfill(xhr.responseText);
+            fulfill(xhr.getResponseHeader('content-type'), xhr.responseText);
         }
     }
 };

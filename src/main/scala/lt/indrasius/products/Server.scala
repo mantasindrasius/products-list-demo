@@ -1,64 +1,54 @@
 package lt.indrasius.products
 
+import java.io.File
 import java.nio.file.{Files, Paths}
 
-import lt.indrasius.rubies.http.server.EmbeddedServer
-import spray.http.HttpMethods._
-import spray.http.StatusCodes._
-import spray.http._
+import org.http4s.StaticFile
 
 import scala.collection.concurrent.TrieMap
-
+import org.http4s.dsl._
+import org.http4s.headers.`Content-Type`
+import org.http4s.server._
+import org.http4s.server.blaze.BlazeBuilder
+import org.http4s.MediaType._
+import scalaz.concurrent.Task
 /**
  * Created by mantas on 15.3.5.
  */
-case class ProductsServer(listenPort: Int, staticsPath: String) extends EmbeddedServer(listenPort) {
+case class ProductsServer(listenPort: Int, staticsPath: String) {
   val dao = MemoryProductDAO
+  val staticsDirFile = new File(staticsPath)
 
-  override def receive: RequestHandler = {
-    case HttpRequest(GET, Uri(_, _, Uri.Path("/index.html"), _, _), _, _, _) =>
-      respondWithFile("index.html")
-    case HttpRequest(GET, Uri(_, _, path, _, _), _, _, _) if path.startsWith(Uri.Path("/app")) =>
-      respondWithFile(path.tail.tail.toString())
-    case HttpRequest(PUT, uri, _, entity, _) if uri.path.startsWith(Uri.Path("/api/products/")) =>
-      val sku = getId(uri)
-
-      dao.store(sku, JSON.parse[ProductDTO](entity.asString).toEntity(sku))
-
-      HttpResponse(NoContent)
-    case HttpRequest(GET, uri, _, _, _) if uri.path == Uri.Path("/api/products/") =>
+  val service = HttpService {
+    case GET -> Root / "index.html" =>
+      Ok("<html><body></body></html>").withHeaders(`Content-Type`(`text/html`))
+    case req @ GET -> Root / "app" / name  =>
+      StaticFile.fromFile(new File(staticsDirFile, name), Some(req))
+        .map(Task.now)
+        .getOrElse(NotFound())
+    case GET -> Root / "api" / "products" =>
       val allProducts = dao.listAll map { _.toDTO }
 
-      HttpResponse(OK, HttpEntity(ContentTypes.`application/json`,
-        JSON.stringify(allProducts)))
-    case HttpRequest(GET, uri, _, _, _) if uri.path.startsWith(Uri.Path("/api/products/")) =>
-      dao.get(getId(uri)) match {
+      Ok().withBody(allProducts)
+    case GET -> Root / "api" / "products" / sku =>
+      dao.get(sku) match {
         case Some(product) =>
-          HttpResponse(OK, HttpEntity(ContentTypes.`application/json`,
-            JSON.stringify(product.toDTO)))
+          Ok().withBody(product.toDTO)
         case None =>
-          HttpResponse(NotFound)
+          NotFound()
       }
-    case req =>
-      println(req)
+    case req @ PUT -> Root / "api" / "products" / sku =>
+      val dto = req.as[ProductDTO].run
 
-      HttpResponse(NotFound)
+      dao.store(sku, dto.toEntity(sku))
+
+      NoContent()
   }
 
-  def getId(uri: Uri): String =
-    uri.path.reverse.head.toString
+  val serviceBuilder = BlazeBuilder.bindHttp(listenPort)
+    .mountService(service, "/")
 
-  def respondWithFile(path: String) = {
-    val filepath = Paths.get(staticsPath, path.stripPrefix("/"))
-    val extension = path.split('.').last
-
-    if (Files.exists(filepath)) {
-      val mediaType = MediaTypes.forExtension(extension).getOrElse(MediaTypes.`text/plain`)
-
-      HttpResponse(OK, HttpEntity(ContentType(mediaType), Files.readAllBytes(filepath)))
-    } else
-      HttpResponse(NotFound)
-  }
+  def start: Unit = serviceBuilder.run
 }
 
 case class Product(sku: String, name: String, price: String) {
