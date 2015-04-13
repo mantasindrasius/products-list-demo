@@ -27,13 +27,16 @@ describe("a product service", function() {
     });
 
     function randomString(n) {
-        var codes = [];
+        var codes = '';
+        var chars = '0123456789abcdefghijklmnopqrstwxyzABCDEFGHIJKLMNOPQRSTWXYZ';
 
         for(var i = 0; i < n; i++ ) {
-            codes.push(Math.floor(Math.random() * 64) + 64);
+            var pos = Math.floor(Math.random() * chars.length);
+
+            codes += chars[pos];
         }
 
-        return String.fromCharCode.apply(this, codes);
+        return codes;
     }
 
     function givenProductExists(productId, withName, withPrice) {
