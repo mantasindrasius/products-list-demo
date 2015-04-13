@@ -9,9 +9,9 @@ function configureChai(chai, _) {
 
     chai.Assertion.addMethod('containAllOf', function (expectedValues) {
         let actualValues = this._obj;
-        let intersection = _.intersection(actualValues, expectedValues);
+        let intersection = _.intersection(actualValues, _.difference(actualValues, expectedValues));
 
-        expect(intersection).to.eql(expectedValues);
+        expect(intersection.length).to.be.equal(0);
     });
 
     chai.Assertion.addMethod('haveSkus', function (expected) {
