@@ -44,6 +44,8 @@ describe("a product service", function() {
 
         return http.put(productId, product)
             .then(function() {
+                product.sku = productId;
+
                 return product;
             })
     }

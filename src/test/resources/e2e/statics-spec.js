@@ -11,7 +11,7 @@ describe("the server", function() {
     });
 
     it("serve file from the app directory", function() {
-        return http.get('app/sku-page.js')
+        return http.get('app/js/sku-page.js')
             .then(function(contentType) {
                 expect(contentType).to.be.equal('application/javascript');
             });

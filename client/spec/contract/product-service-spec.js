@@ -22,6 +22,10 @@ describe("a product service", function() {
             .storeProduct("SKU-1", product)
             .then(() => service.storeProduct("SKU-2", product))
             .then(() => service.getProducts())
-            .then(productsInStock => expect(productsInStock).to.haveSkus(['SKU-2', 'SKU-1']))
+            .then(productsInStock => {
+                console.log(productsInStock);
+
+                return expect(productsInStock).to.haveSkus(['SKU-2', 'SKU-1'])
+            })
     );
 });

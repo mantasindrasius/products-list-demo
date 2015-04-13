@@ -8,7 +8,7 @@ module.exports = function(config) {
             'client/app/bower_components/underscore/underscore.js',
             'target/client/spec/matchers.js',
             'target/client/spec/bootstrap-client.js',
-            'client/app/product-service.js',
+            'client/app/js/product-service.js',
             'target/client/spec/contract/product-service-spec.js',
         ],
         reporters: ['dots'],

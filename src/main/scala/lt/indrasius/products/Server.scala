@@ -24,8 +24,10 @@ case class ProductsServer(listenPort: Int, staticsPath: String) {
       StaticFile.fromFile(new File(staticsDirFile, "index.html"), Some(req))
         .map(Task.now)
         .getOrElse(NotFound())
-    case req @ GET -> Root / "app" / name  =>
-      StaticFile.fromFile(new File(staticsDirFile, name), Some(req))
+    case req if req.uri.path.startsWith("/app/") =>
+      val path = req.pathInfo.split("/app/", 2)(1)
+
+      StaticFile.fromFile(new File(staticsDirFile, path), Some(req))
         .map(Task.now)
         .getOrElse(NotFound())
     case GET -> Root / "api" / "products" =>

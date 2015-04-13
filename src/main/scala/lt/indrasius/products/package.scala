@@ -23,7 +23,7 @@ package object products {
     import org.json4s.JsonDSL._
 
     def write(obj: ProductDTO): JValue =
-      ("name" -> obj.name) ~ ("price" -> obj.price)
+      ("name" -> obj.name) ~ ("price" -> obj.price) ~ ("sku" -> obj.sku)
   }
 
   implicit val productsWriter = new Writer[Seq[ProductDTO]] {
