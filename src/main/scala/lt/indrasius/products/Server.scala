@@ -20,8 +20,10 @@ case class ProductsServer(listenPort: Int, staticsPath: String) {
   val staticsDirFile = new File(staticsPath)
 
   val service = HttpService {
-    case GET -> Root / "index.html" =>
-      Ok("<html><body></body></html>").withHeaders(`Content-Type`(`text/html`))
+    case req @ GET -> Root / "index.html" =>
+      StaticFile.fromFile(new File(staticsDirFile, "index.html"), Some(req))
+        .map(Task.now)
+        .getOrElse(NotFound())
     case req @ GET -> Root / "app" / name  =>
       StaticFile.fromFile(new File(staticsDirFile, name), Some(req))
         .map(Task.now)

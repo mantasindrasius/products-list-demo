@@ -10,7 +10,7 @@ version := "1.0-SNAPSHOT"
 
 scalaVersion := "2.11.5"
 
-mainClass := Some("lt.indrasius.products.Server")
+mainClass := Some("lt.indrasius.products.MainApp")
 
 testFrameworks += TestFramework("lt.indrasius.e2e.js.sbt.Framework")
 

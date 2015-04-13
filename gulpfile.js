@@ -12,7 +12,7 @@ var gulp = require('gulp'),
 
 var server;
 var serverPort = 9999;
-var serverJar = 'target/scala-2.10/sku-demo_2.10-1.0-one-jar.jar';
+var serverJar = 'target/scala-2.11/sku-demo_2.11-1.0-SNAPSHOT-one-jar.jar';
 var reporter = 'dot';
 
 gulp.task('bower', function() {
